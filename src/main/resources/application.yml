@@ -1,3 +1,11 @@
 spring:
   application:
     name: lottery-draw-service
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/lottery_draw_db}
+    username: ${DATABASE_USER:postgre_user}
+    password: ${DATABASE_PASSWORD:postgre_password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
