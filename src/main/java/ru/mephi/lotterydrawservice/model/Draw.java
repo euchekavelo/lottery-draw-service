@@ -22,7 +22,6 @@ public class Draw {
     @Enumerated(EnumType.STRING)
     private LotteryType lotteryType;
 
-    @CreationTimestamp
     private LocalDateTime startTime;
 
     private LocalDateTime finishTime;
