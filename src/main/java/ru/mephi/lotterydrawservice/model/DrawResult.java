@@ -2,6 +2,7 @@ package ru.mephi.lotterydrawservice.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -20,5 +21,6 @@ public class DrawResult {
 
     private String winningCombination;
 
+    @CreationTimestamp
     private LocalDateTime resultTime;
 }
