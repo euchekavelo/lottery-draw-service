@@ -9,3 +9,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+
+
+app:
+  jwt:
+    secret: mephi
+    token-expiration-milliseconds: 3600000
