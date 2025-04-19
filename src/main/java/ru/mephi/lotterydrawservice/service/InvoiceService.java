@@ -12,4 +12,6 @@ public interface InvoiceService {
     void cancelByDraw(long drawId) throws Exception;
 
     Invoice findInvoiceById(long invoiceId) throws InvoiceNotFoundException;
+
+    Boolean checkDrawExistsAndActive(long drawId);
 }
