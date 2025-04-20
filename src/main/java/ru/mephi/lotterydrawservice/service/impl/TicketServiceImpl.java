@@ -48,4 +48,9 @@ public class TicketServiceImpl implements TicketService {
 
         return authUser.getUser();
     }
+
+    @Override
+    public void createTicket(String ticketData, User user) {
+        // logic
+    }
 }

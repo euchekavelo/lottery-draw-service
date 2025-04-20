@@ -5,20 +5,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.mephi.lotterydrawservice.dto.response.ErrorResponseDto;
-import ru.mephi.lotterydrawservice.exception.DrawResultNotFoundException;
-import ru.mephi.lotterydrawservice.exception.RegistrationException;
-import ru.mephi.lotterydrawservice.exception.TicketNotFoundException;
-import ru.mephi.lotterydrawservice.exception.UserNotFoundException;
+import ru.mephi.lotterydrawservice.exception.*;
 
 @ControllerAdvice
 public class ExceptionHandlerControllerAdvice {
 
-    @ExceptionHandler({DrawResultNotFoundException.class, TicketNotFoundException.class, UserNotFoundException.class})
+    @ExceptionHandler({DrawResultNotFoundException.class, TicketNotFoundException.class, UserNotFoundException.class,
+            DrawNotFoundException.class, InvoiceNotFoundException.class})
     public ResponseEntity<ErrorResponseDto> handleExceptionForNotFoundHttpStatus(Exception ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(ex.getMessage()));
     }
 
-    @ExceptionHandler(RegistrationException.class)
+    @ExceptionHandler({RegistrationException.class, InvalidPaymentDataException.class, InvalidTicketDataException.class,
+            InvoiceAlreadyProcessedException.class})
     public ResponseEntity<ErrorResponseDto> handleExceptionForBadRequestHttpStatus(Exception ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(ex.getMessage()));
     }
