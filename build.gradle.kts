@@ -30,6 +30,7 @@ dependencies {
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	implementation ("org.mapstruct:mapstruct:1.5.5.Final")
 	annotationProcessor ("org.mapstruct:mapstruct-processor:1.5.5.Final")
+	implementation("org.json:json:20240303")
 }
 
 tasks.withType<Test> {
