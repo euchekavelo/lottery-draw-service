@@ -18,7 +18,7 @@ public class ExceptionHandlerControllerAdvice {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(ex.getMessage()));
     }
 
-    @ExceptionHandler(RegistrationException.class)
+    @ExceptionHandler({RegistrationException.class, IllegalArgumentException.class})
     public ResponseEntity<ErrorResponseDto> handleExceptionForBadRequestHttpStatus(Exception ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(ex.getMessage()));
     }

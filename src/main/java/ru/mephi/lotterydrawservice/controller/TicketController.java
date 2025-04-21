@@ -28,8 +28,13 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.checkTicketResult(id));
     }
 
-    @GetMapping("/check-result")
+    @GetMapping
     public ResponseEntity<List<TicketResponseDto>> checkTicketResults() {
         return ResponseEntity.ok(ticketService.checkTicketResults());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TicketResponseDto> getTicketById(@PathVariable long id) throws TicketNotFoundException {
+        return ResponseEntity.ok(ticketService.getTicketById(id));
     }
 }
