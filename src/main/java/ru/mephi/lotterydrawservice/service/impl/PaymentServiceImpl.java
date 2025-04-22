@@ -23,6 +23,7 @@ import java.security.SecureRandom;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
+
     private final PaymentRepository paymentRepository;
     private final PaymentMapper paymentMapper;
     private final InvoiceService invoiceService;
@@ -56,7 +57,11 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (isPaymentSuccess()) {
             payment.setStatus(PaymentStatus.SUCCESS);
-            ticketService.createTicket(invoice.getTicketData(), user);
+            try {
+                ticketService.createTicket(user, invoice.getTicketData());
+            } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
         } else {
             payment.setStatus(PaymentStatus.FAILED);
         }

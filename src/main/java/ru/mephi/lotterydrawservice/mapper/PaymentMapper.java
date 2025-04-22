@@ -7,5 +7,6 @@ import ru.mephi.lotterydrawservice.model.Payment;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface PaymentMapper {
+
     PaymentResponseDto paymentToPaymentResponseDto(Payment payment);
 }

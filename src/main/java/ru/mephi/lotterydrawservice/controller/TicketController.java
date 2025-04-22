@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.mephi.lotterydrawservice.dto.response.TicketResponseDto;
-import ru.mephi.lotterydrawservice.exception.TicketNotFoundException;
 import ru.mephi.lotterydrawservice.service.TicketService;
 
 import java.util.List;
@@ -24,7 +23,7 @@ public class TicketController {
     }
 
     @GetMapping("/{id}/check-result")
-    public ResponseEntity<TicketResponseDto> checkTicketResult(@PathVariable long id) throws TicketNotFoundException {
+    public ResponseEntity<TicketResponseDto> checkTicketResult(@PathVariable long id) {
         return ResponseEntity.ok(ticketService.checkTicketResult(id));
     }
 
@@ -34,7 +33,7 @@ public class TicketController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TicketResponseDto> getTicketById(@PathVariable long id) throws TicketNotFoundException {
+    public ResponseEntity<TicketResponseDto> getTicketById(@PathVariable long id) {
         return ResponseEntity.ok(ticketService.getTicketById(id));
     }
 }

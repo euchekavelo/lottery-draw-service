@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 
 @Data
 public class PaymentRequestDto {
+
     private long invoiceId;
     private String cardNumber;
     private String cvc;

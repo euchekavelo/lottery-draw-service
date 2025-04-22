@@ -67,7 +67,6 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.authorizeHttpRequests(auth -> auth
                         .requestMatchers(ALLOWED_URL_PATTERNS.toArray(String[]::new)).permitAll()
-//                        .requestMatchers("/test").permitAll() //allow RestAPI without login
                         .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)

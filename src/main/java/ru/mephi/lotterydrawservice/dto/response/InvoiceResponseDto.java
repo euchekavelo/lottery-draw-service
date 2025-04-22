@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class InvoiceResponseDto {
+
     private long id;
     private String ticketData;
     private LocalDateTime registerTime;

@@ -35,7 +35,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public UserResponseDto register(UserRequestDto userRequestDto) throws RegistrationException {
+    public UserResponseDto register(UserRequestDto userRequestDto) {
         String role = userRequestDto.getRole();
 
         if (!(role.equals(Role.ADMIN.toString()) || role.equals(Role.USER.toString()))) {
@@ -49,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public TokenResponseDto login(UserShortRequestDto userShortRequestDto) throws UserNotFoundException {
+    public TokenResponseDto login(UserShortRequestDto userShortRequestDto) {
         Optional<User> optionalUser = userRepository.findByLogin(userShortRequestDto.getLogin());
 
         if (optionalUser.isEmpty() || !passwordEncoder.matches(userShortRequestDto.getPassword(),

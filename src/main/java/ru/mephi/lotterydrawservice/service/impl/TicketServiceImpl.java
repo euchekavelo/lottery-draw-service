@@ -39,7 +39,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public TicketResponseDto checkTicketResult(long ticketId) throws TicketNotFoundException {
+    public TicketResponseDto checkTicketResult(long ticketId) {
         User currentuser = getAuthUser();
         Ticket ticket = ticketRepository.findByIdAndUser(ticketId, currentuser)
                 .orElseThrow(() -> new TicketNotFoundException("No ticket with the specified ID was found " +
@@ -56,7 +56,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public TicketResponseDto getTicketById(long id) throws TicketNotFoundException {
+    public TicketResponseDto getTicketById(long id) {
         User currentuser = getAuthUser();
         Ticket ticket = ticketRepository.findByIdAndUser(id, currentuser)
                 .orElseThrow(() -> new TicketNotFoundException("No ticket with the specified ID was found " +
@@ -66,7 +66,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public void createTicket(User user, String ticketData) throws JsonProcessingException, DrawResultNotFoundException {
+    public void createTicket(User user, String ticketData) throws JsonProcessingException {
         long drawId = parseData(ticketData).get("drawID").asLong();
         String combinationNumbers = parseData(ticketData).get("numbers").asText();
 
