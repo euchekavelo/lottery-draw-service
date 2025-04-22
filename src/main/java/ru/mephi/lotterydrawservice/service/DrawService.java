@@ -6,4 +6,6 @@ import ru.mephi.lotterydrawservice.exception.DrawResultNotFoundException;
 public interface DrawService {
 
     WinningCombinationResponseDto getWinningCombinationOfTheDraw(long drawId) throws DrawResultNotFoundException;
+
+    Boolean checkDrawExistsAndActive(long drawId);
 }
