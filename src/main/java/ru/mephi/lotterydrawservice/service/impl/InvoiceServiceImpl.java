@@ -12,28 +12,33 @@ import ru.mephi.lotterydrawservice.exception.DrawNotFoundException;
 import ru.mephi.lotterydrawservice.exception.InvalidTicketDataException;
 import ru.mephi.lotterydrawservice.exception.InvoiceNotFoundException;
 import ru.mephi.lotterydrawservice.mapper.InvoiceMapper;
+import ru.mephi.lotterydrawservice.model.Draw;
 import ru.mephi.lotterydrawservice.model.Invoice;
 import ru.mephi.lotterydrawservice.model.User;
+import ru.mephi.lotterydrawservice.model.enums.DrawStatus;
 import ru.mephi.lotterydrawservice.model.enums.InvoiceStatus;
+import ru.mephi.lotterydrawservice.repository.DrawRepository;
 import ru.mephi.lotterydrawservice.repository.InvoiceRepository;
 import ru.mephi.lotterydrawservice.security.AuthUser;
-import ru.mephi.lotterydrawservice.service.DrawService;
 import ru.mephi.lotterydrawservice.service.InvoiceService;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
-    private final DrawService drawService;
+
+    private final DrawRepository drawRepository;
+
     private final InvoiceMapper invoiceMapper;
 
     @Autowired
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, DrawService drawService, InvoiceMapper invoiceMapper) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, DrawRepository drawRepository, InvoiceMapper invoiceMapper) {
         this.invoiceRepository = invoiceRepository;
-        this.drawService = drawService;
+        this.drawRepository = drawRepository;
         this.invoiceMapper = invoiceMapper;
     }
 
@@ -54,7 +59,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             throw new SecurityException("Authenticated user does not match ticket owner.");
         }
 
-        if (!drawService.checkDrawExistsAndActive(ticketData.getLong("drawId"))) {
+        if (!checkDrawExistsAndActive(ticketData.getLong("drawId"))) {
             throw new DrawNotFoundException("The specified draw does not exist or is not active.");
         }
 
@@ -78,5 +83,11 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Invoice findInvoiceById(long invoiceId) {
         return invoiceRepository.findById(invoiceId)
                 .orElseThrow(() -> new InvoiceNotFoundException("Invoice with ID " + invoiceId + " not found."));
+    }
+
+    @Override
+    public Boolean checkDrawExistsAndActive(long drawId) {
+        Optional<Draw> draw = drawRepository.findById(drawId);
+        return draw.map(value -> value.getStatus().equals(DrawStatus.ACTIVE)).orElse(false);
     }
 }

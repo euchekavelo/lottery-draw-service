@@ -28,7 +28,7 @@ public class Draw {
     @Enumerated(EnumType.STRING)
     private DrawStatus status;
 
-    @OneToMany(mappedBy = "draw", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "draw", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Ticket> ticketList = new ArrayList<>();
 
     @OneToOne(mappedBy = "draw", cascade = CascadeType.ALL)

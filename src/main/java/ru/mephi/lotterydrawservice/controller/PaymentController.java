@@ -1,5 +1,6 @@
 package ru.mephi.lotterydrawservice.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.mephi.lotterydrawservice.dto.request.PaymentRequestDto;
 import ru.mephi.lotterydrawservice.dto.response.PaymentResponseDto;
+import ru.mephi.lotterydrawservice.exception.DrawResultNotFoundException;
 import ru.mephi.lotterydrawservice.service.PaymentService;
 
 @RestController
@@ -22,7 +24,7 @@ public class PaymentController {
     }
 
     @PostMapping
-    public ResponseEntity<PaymentResponseDto> pay(@RequestBody PaymentRequestDto paymentRequestDto) {
+    public ResponseEntity<PaymentResponseDto> pay(@RequestBody PaymentRequestDto paymentRequestDto) throws DrawResultNotFoundException, JsonProcessingException {
         return ResponseEntity.ok(paymentService.pay(paymentRequestDto));
     }
 }
