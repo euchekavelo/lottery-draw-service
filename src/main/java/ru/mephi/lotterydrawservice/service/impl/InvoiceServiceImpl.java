@@ -27,9 +27,7 @@ import java.util.Objects;
 public class InvoiceServiceImpl implements InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
-
     private final DrawService drawService;
-
     private final InvoiceMapper invoiceMapper;
 
     @Autowired
@@ -77,7 +75,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Invoice findInvoiceById(long invoiceId) throws InvoiceNotFoundException {
+    public Invoice findInvoiceById(long invoiceId) {
         return invoiceRepository.findById(invoiceId)
                 .orElseThrow(() -> new InvoiceNotFoundException("Invoice with ID " + invoiceId + " not found."));
     }

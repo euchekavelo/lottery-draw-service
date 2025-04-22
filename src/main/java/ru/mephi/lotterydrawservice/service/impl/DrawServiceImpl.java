@@ -17,7 +17,6 @@ import java.util.Optional;
 public class DrawServiceImpl implements DrawService {
 
     private final DrawResultRepository drawResultRepository;
-
     private final DrawRepository drawRepository;
 
     @Autowired
@@ -27,7 +26,7 @@ public class DrawServiceImpl implements DrawService {
     }
 
     @Override
-    public WinningCombinationResponseDto getWinningCombinationOfTheDraw(long drawId) throws DrawResultNotFoundException {
+    public WinningCombinationResponseDto getWinningCombinationOfTheDraw(long drawId) {
         DrawResult drawResult = drawResultRepository.findById(drawId)
                 .orElseThrow(() -> new DrawResultNotFoundException("The draw result for the specified draw was not found."));
 

@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class PaymentResponseDto {
+
     private long id;
     private BigDecimal amount;
     private PaymentStatus status;

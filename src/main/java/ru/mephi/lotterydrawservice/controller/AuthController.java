@@ -11,8 +11,6 @@ import ru.mephi.lotterydrawservice.dto.request.UserRequestDto;
 import ru.mephi.lotterydrawservice.dto.request.UserShortRequestDto;
 import ru.mephi.lotterydrawservice.dto.response.TokenResponseDto;
 import ru.mephi.lotterydrawservice.dto.response.UserResponseDto;
-import ru.mephi.lotterydrawservice.exception.RegistrationException;
-import ru.mephi.lotterydrawservice.exception.UserNotFoundException;
 import ru.mephi.lotterydrawservice.service.AuthService;
 
 @RestController
@@ -27,16 +25,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDto> register(@RequestBody UserRequestDto userRequestDto)
-            throws RegistrationException {
-
+    public ResponseEntity<UserResponseDto> register(@RequestBody UserRequestDto userRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(userRequestDto));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponseDto> login(@RequestBody UserShortRequestDto userShortRequestDto)
-            throws UserNotFoundException {
-
+    public ResponseEntity<TokenResponseDto> login(@RequestBody UserShortRequestDto userShortRequestDto) {
         return ResponseEntity.ok(authService.login(userShortRequestDto));
     }
 }

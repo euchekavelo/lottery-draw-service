@@ -6,6 +6,7 @@ import ru.mephi.lotterydrawservice.exception.InvoiceNotFoundException;
 import ru.mephi.lotterydrawservice.model.Invoice;
 
 public interface InvoiceService {
+
     InvoiceResponseDto register(InvoiceRequestDto invoiceRequestDto);
 
     void cancelByDraw(long drawId) throws Exception;

@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.mephi.lotterydrawservice.dto.response.WinningCombinationResponseDto;
-import ru.mephi.lotterydrawservice.exception.DrawResultNotFoundException;
 import ru.mephi.lotterydrawservice.service.DrawService;
 
 @RestController
@@ -22,9 +21,7 @@ public class DrawController {
     }
 
     @GetMapping("/{id}/results")
-    public ResponseEntity<WinningCombinationResponseDto> getWinningCombinationOfTheDraw(@PathVariable long id)
-            throws DrawResultNotFoundException {
-
+    public ResponseEntity<WinningCombinationResponseDto> getWinningCombinationOfTheDraw(@PathVariable long id) {
         return ResponseEntity.ok(drawService.getWinningCombinationOfTheDraw(id));
     }
 }
