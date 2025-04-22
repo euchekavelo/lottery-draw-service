@@ -7,7 +7,8 @@ import java.time.LocalDateTime;
 
 @Data
 public class DrawCreateResponseDto {
-    private Long id;
+
+    private long id;
     private LotteryType lotteryType;
     private LocalDateTime startTime;
     private LocalDateTime finishTime;
