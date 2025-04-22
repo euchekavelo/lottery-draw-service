@@ -17,7 +17,7 @@ public class ExceptionHandlerControllerAdvice {
     }
 
     @ExceptionHandler({RegistrationException.class, InvalidPaymentDataException.class, InvalidTicketDataException.class,
-            InvoiceAlreadyProcessedException.class})
+            InvoiceAlreadyProcessedException.class, IllegalArgumentException.class})
     public ResponseEntity<ErrorResponseDto> handleExceptionForBadRequestHttpStatus(Exception ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(ex.getMessage()));
     }

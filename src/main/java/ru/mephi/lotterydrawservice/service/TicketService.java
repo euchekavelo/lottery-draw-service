@@ -1,6 +1,8 @@
 package ru.mephi.lotterydrawservice.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import ru.mephi.lotterydrawservice.dto.response.TicketResponseDto;
+import ru.mephi.lotterydrawservice.exception.DrawResultNotFoundException;
 import ru.mephi.lotterydrawservice.exception.TicketNotFoundException;
 import ru.mephi.lotterydrawservice.model.User;
 
@@ -12,5 +14,7 @@ public interface TicketService {
 
     List<TicketResponseDto> checkTicketResults();
 
-    void createTicket(String ticketData, User user);
+    TicketResponseDto getTicketById(long id) throws TicketNotFoundException;
+
+    void createTicket(User user, String ticketData) throws JsonProcessingException, DrawResultNotFoundException;
 }
