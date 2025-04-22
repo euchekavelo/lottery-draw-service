@@ -3,11 +3,10 @@ package ru.mephi.lotterydrawservice.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.mephi.lotterydrawservice.dto.DrawDto;
+import ru.mephi.lotterydrawservice.dto.response.DrawResponseDto;
 import ru.mephi.lotterydrawservice.dto.request.DrawCreateRequestDto;
 import ru.mephi.lotterydrawservice.dto.response.DrawCreateResponseDto;
 import ru.mephi.lotterydrawservice.dto.response.WinningCombinationResponseDto;
-import ru.mephi.lotterydrawservice.exception.DrawResultNotFoundException;
 import ru.mephi.lotterydrawservice.model.enums.DrawStatus;
 import ru.mephi.lotterydrawservice.service.DrawService;
 
@@ -30,18 +29,16 @@ public class DrawController {
     }
 
     @PostMapping("/admin")
-    // todo admin role
     public ResponseEntity<DrawCreateResponseDto> createDraw(@RequestBody DrawCreateRequestDto createRequestDto) {
         return ResponseEntity.ok(drawService.createDraw(createRequestDto));
     }
 
     @GetMapping("/active")
-    public ResponseEntity<List<DrawDto>> getActiveDraw() {
-        return ResponseEntity.ok(drawService.getDrawByStatus(DrawStatus.ACTIVE));
+    public ResponseEntity<List<DrawResponseDto>> getActiveDraw() {
+        return ResponseEntity.ok(drawService.getDrawsByStatus(DrawStatus.ACTIVE));
     }
 
     @PutMapping("/{id}/cancel/admin")
-    // todo admin role
     public ResponseEntity<Void> cancelDraw(@PathVariable Long id) {
         drawService.cancelDraw(id);
         return ResponseEntity.noContent()
@@ -49,7 +46,7 @@ public class DrawController {
     }
 
     @GetMapping("/completed")
-    public ResponseEntity<List<DrawDto>> getCompletedDraw() {
-        return ResponseEntity.ok(drawService.getDrawByStatus(DrawStatus.COMPLETED));
+    public ResponseEntity<List<DrawResponseDto>> getCompletedDraw() {
+        return ResponseEntity.ok(drawService.getDrawsByStatus(DrawStatus.COMPLETED));
     }
 }

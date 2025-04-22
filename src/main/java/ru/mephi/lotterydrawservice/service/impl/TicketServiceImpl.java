@@ -120,7 +120,7 @@ public class TicketServiceImpl implements TicketService {
 
     private void validateTicketNumbers(String data) {
         if (data == null || data.trim().isEmpty()) {
-            throw new IllegalArgumentException("Поле не может быть пустым.");
+            throw new IllegalArgumentException("The field cannot be empty.");
         }
 
         List<Integer> numbers;
@@ -130,20 +130,20 @@ public class TicketServiceImpl implements TicketService {
                     .map(Integer::parseInt)
                     .toList();
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Неверные данные. Должны быть введены цифры через пробел.");
+            throw new IllegalArgumentException("Incorrect data. Numbers must be entered separated by spaces.");
         }
 
         if (numbers.size() != 5) {
-            throw new IllegalArgumentException("Для лотерея '5 out of 36' должно быть введено 5 цифр.");
+            throw new IllegalArgumentException("For the '5 out of 36' lottery 5 digits must be entered.");
         }
 
         boolean isValidRange = numbers.stream().allMatch(num -> num >= 1 && num <= 36);
         if (!isValidRange) {
-            throw new IllegalArgumentException("Все числа должны быть в диапозоне от 1 до 36");
+            throw new IllegalArgumentException("All numbers must be between 1 and 36.");
         }
 
         if (numbers.stream().distinct().count() != numbers.size()) {
-            throw new IllegalArgumentException("Все числа должны быть уникальными.");
+            throw new IllegalArgumentException("All numbers must be unique.");
         }
     }
 }

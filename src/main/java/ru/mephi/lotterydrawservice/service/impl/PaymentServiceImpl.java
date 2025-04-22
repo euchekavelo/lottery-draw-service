@@ -30,7 +30,9 @@ public class PaymentServiceImpl implements PaymentService {
     private final TicketService ticketService;
 
     @Autowired
-    public PaymentServiceImpl(PaymentRepository paymentRepository, PaymentMapper paymentMapper, InvoiceService invoiceService, TicketService ticketService) {
+    public PaymentServiceImpl(PaymentRepository paymentRepository, PaymentMapper paymentMapper,
+                              InvoiceService invoiceService, TicketService ticketService) {
+
         this.paymentRepository = paymentRepository;
         this.paymentMapper = paymentMapper;
         this.invoiceService = invoiceService;

@@ -3,7 +3,7 @@ package ru.mephi.lotterydrawservice.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.mephi.lotterydrawservice.dto.DrawDto;
+import ru.mephi.lotterydrawservice.dto.response.DrawResponseDto;
 import ru.mephi.lotterydrawservice.dto.request.DrawCreateRequestDto;
 import ru.mephi.lotterydrawservice.dto.response.DrawCreateResponseDto;
 import ru.mephi.lotterydrawservice.dto.response.WinningCombinationResponseDto;
@@ -16,7 +16,6 @@ import ru.mephi.lotterydrawservice.model.enums.LotteryType;
 import ru.mephi.lotterydrawservice.model.enums.TicketStatus;
 import ru.mephi.lotterydrawservice.repository.DrawRepository;
 import ru.mephi.lotterydrawservice.repository.DrawResultRepository;
-import ru.mephi.lotterydrawservice.service.DrawResultService;
 import ru.mephi.lotterydrawservice.service.DrawService;
 import ru.mephi.lotterydrawservice.service.InvoiceService;
 
@@ -36,7 +35,8 @@ public class DrawServiceImpl implements DrawService {
 
     @Autowired
     public DrawServiceImpl(DrawResultRepository drawResultRepository,
-                           DrawMapper drawMapper, DrawRepository drawRepository, DrawResultService drawResultService, InvoiceService invoiceService) {
+                           DrawMapper drawMapper, DrawRepository drawRepository, InvoiceService invoiceService) {
+
         this.drawResultRepository = drawResultRepository;
         this.drawRepository = drawRepository;
         this.drawMapper = drawMapper;
@@ -62,9 +62,9 @@ public class DrawServiceImpl implements DrawService {
     }
 
     @Override
-    public List<DrawDto> getDrawByStatus(DrawStatus status) {
+    public List<DrawResponseDto> getDrawsByStatus(DrawStatus status) {
         return drawRepository.findAllByStatus(status).stream()
-                .map(drawMapper::toDrawDto)
+                .map(drawMapper::toDrawResponseDto)
                 .toList();
     }
 

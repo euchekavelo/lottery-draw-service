@@ -30,13 +30,13 @@ import java.util.Optional;
 public class InvoiceServiceImpl implements InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
-
     private final DrawRepository drawRepository;
-
     private final InvoiceMapper invoiceMapper;
 
     @Autowired
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, DrawRepository drawRepository, InvoiceMapper invoiceMapper) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, DrawRepository drawRepository,
+                              InvoiceMapper invoiceMapper) {
+
         this.invoiceRepository = invoiceRepository;
         this.drawRepository = drawRepository;
         this.invoiceMapper = invoiceMapper;
@@ -85,8 +85,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .orElseThrow(() -> new InvoiceNotFoundException("Invoice with ID " + invoiceId + " not found."));
     }
 
-    @Override
-    public Boolean checkDrawExistsAndActive(long drawId) {
+    private Boolean checkDrawExistsAndActive(long drawId) {
         Optional<Draw> draw = drawRepository.findById(drawId);
         return draw.map(value -> value.getStatus().equals(DrawStatus.ACTIVE)).orElse(false);
     }
