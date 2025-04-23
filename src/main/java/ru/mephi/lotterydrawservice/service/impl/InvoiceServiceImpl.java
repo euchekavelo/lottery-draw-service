@@ -1,12 +1,13 @@
 package ru.mephi.lotterydrawservice.service.impl;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.mephi.lotterydrawservice.dto.request.InvoiceRequestDto;
+import ru.mephi.lotterydrawservice.dto.TicketDataDto;
 import ru.mephi.lotterydrawservice.dto.response.InvoiceResponseDto;
 import ru.mephi.lotterydrawservice.exception.DrawNotFoundException;
 import ru.mephi.lotterydrawservice.exception.InvalidTicketDataException;
@@ -32,39 +33,42 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final DrawRepository drawRepository;
     private final InvoiceMapper invoiceMapper;
+    private final ObjectMapper objectMapper;
 
     @Autowired
     public InvoiceServiceImpl(InvoiceRepository invoiceRepository, DrawRepository drawRepository,
-                              InvoiceMapper invoiceMapper) {
+                              InvoiceMapper invoiceMapper, ObjectMapper objectMapper) {
 
         this.invoiceRepository = invoiceRepository;
         this.drawRepository = drawRepository;
         this.invoiceMapper = invoiceMapper;
+        this.objectMapper = objectMapper;
     }
 
-    @Transactional
     @Override
     public InvoiceResponseDto register(InvoiceRequestDto invoiceRequestDto) {
         AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = authUser.getUser();
 
-        JSONObject ticketData;
+        TicketDataDto ticketData = invoiceRequestDto.getTicketData();
+        String ticketDataString;
+
         try {
-            ticketData = new JSONObject(invoiceRequestDto.getTicketData());
-        } catch (JSONException err) {
+            ticketDataString = objectMapper.writeValueAsString(invoiceRequestDto.getTicketData());
+        } catch (JsonProcessingException err) {
             throw new InvalidTicketDataException("Invalid ticketData format.");
         }
 
-        if (!Objects.equals(user.getId(), ticketData.getLong("userId"))) {
+        if (!Objects.equals(user.getId(), ticketData.getUserId())) {
             throw new SecurityException("Authenticated user does not match ticket owner.");
         }
 
-        if (!checkDrawExistsAndActive(ticketData.getLong("drawId"))) {
+        if (!checkDrawExistsAndActive(ticketData.getDrawId())) {
             throw new DrawNotFoundException("The specified draw does not exist or is not active.");
         }
 
         Invoice invoice = new Invoice();
-        invoice.setTicketData(invoiceRequestDto.getTicketData());
+        invoice.setTicketData(ticketDataString);
         invoice.setStatus(InvoiceStatus.PENDING);
 
         return invoiceMapper.invoiceToInvoiceResponseDto(invoiceRepository.save(invoice));

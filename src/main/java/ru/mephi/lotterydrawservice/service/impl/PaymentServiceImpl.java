@@ -3,6 +3,7 @@ package ru.mephi.lotterydrawservice.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.mephi.lotterydrawservice.dto.request.PaymentRequestDto;
 import ru.mephi.lotterydrawservice.dto.response.PaymentResponseDto;
 import ru.mephi.lotterydrawservice.exception.InvalidPaymentDataException;
@@ -39,6 +40,7 @@ public class PaymentServiceImpl implements PaymentService {
         this.ticketService = ticketService;
     }
 
+    @Transactional
     @Override
     public PaymentResponseDto pay(PaymentRequestDto paymentRequestDto) {
         AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -54,11 +56,10 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         Payment payment = new Payment();
-        payment.setInvoice(invoice);
-        payment.setAmount(paymentRequestDto.getAmount());
 
         if (isPaymentSuccess()) {
             payment.setStatus(PaymentStatus.SUCCESS);
+            invoice.setStatus(InvoiceStatus.COMPLETED);
             try {
                 ticketService.createTicket(user, invoice.getTicketData());
             } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
@@ -67,6 +68,9 @@ public class PaymentServiceImpl implements PaymentService {
         } else {
             payment.setStatus(PaymentStatus.FAILED);
         }
+
+        payment.setInvoice(invoice);
+        payment.setAmount(paymentRequestDto.getAmount());
 
         return paymentMapper.paymentToPaymentResponseDto(paymentRepository.save(payment));
     }

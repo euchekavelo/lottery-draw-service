@@ -10,7 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
-import ru.mephi.lotterydrawservice.dto.response.ErrorResponseDto;
+import ru.mephi.lotterydrawservice.dto.response.ResponseDto;
 
 import java.io.IOException;
 
@@ -31,11 +31,11 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
-        ErrorResponseDto errorResponseDto = ErrorResponseDto.builder()
+        ResponseDto responseDto = ResponseDto.builder()
                 .message(authException.getMessage())
                 .result(false)
                 .build();
 
-        objectMapper.writeValue(response.getOutputStream(), errorResponseDto);
+        objectMapper.writeValue(response.getOutputStream(), responseDto);
     }
 }

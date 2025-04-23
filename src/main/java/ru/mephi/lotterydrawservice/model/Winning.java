@@ -6,23 +6,18 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Entity
-@Table(
-    name = "balances",
-    indexes = {
-        @Index(name = "idx_balance_user_id", columnList = "user_id")
-    }
-)
+@Table(name = "winnings")
 @Data
-public class Balance {
+public class Winning {
 
     @Id
-    private Long userId;
+    private Long ticketId;
 
     @Column(precision = 12, scale = 2)
     private BigDecimal amount;
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "ticket_id")
+    private Ticket ticket;
 }

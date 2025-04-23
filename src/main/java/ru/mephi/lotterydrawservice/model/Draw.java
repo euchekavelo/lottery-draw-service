@@ -10,7 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "draws")
+@Table(
+    name = "draws",
+    indexes = {
+        @Index(name = "idx_draw_status", columnList = "status")
+    }
+)
 @Data
 public class Draw {
 

@@ -30,12 +30,16 @@ public class TicketServiceImpl implements TicketService {
     private final TicketRepository ticketRepository;
     private final TicketMapper ticketMapper;
     private final DrawRepository drawRepository;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public TicketServiceImpl(TicketRepository ticketRepository, TicketMapper ticketMapper, DrawRepository drawRepository) {
+    public TicketServiceImpl(TicketRepository ticketRepository, TicketMapper ticketMapper, DrawRepository drawRepository,
+                             ObjectMapper objectMapper) {
+
         this.ticketRepository = ticketRepository;
         this.ticketMapper = ticketMapper;
         this.drawRepository = drawRepository;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -67,7 +71,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public void createTicket(User user, String ticketData) throws JsonProcessingException {
-        long drawId = parseData(ticketData).get("drawID").asLong();
+        long drawId = parseData(ticketData).get("drawId").asLong();
         String combinationNumbers = parseData(ticketData).get("numbers").asText();
 
         Draw draw = drawRepository.findById(drawId)
@@ -96,8 +100,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     private JsonNode parseData(String data) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readTree(data);
+        return objectMapper.readTree(data);
     }
 
     private String generateRandomNumbers() {
