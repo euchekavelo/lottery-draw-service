@@ -82,7 +82,7 @@ public class TicketServiceImpl implements TicketService {
         if(draw.getLotteryType().equals(LotteryType.FIVE_OUT_OF_THIRTY_SIX)){
             validateTicketNumbers(combinationNumbers);
         } else {
-            combinationNumbers=generateRandomNumbers();
+            combinationNumbers = generateRandomNumbers();
         }
 
         Ticket ticket = new Ticket();

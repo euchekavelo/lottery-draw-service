@@ -70,7 +70,7 @@ public class ExportServiceImpl implements ExportService {
         ticketRepository.saveAll(ticketList);
 
         return ResponseDto.builder()
-                .message("The lottery winnings were distributed among the winners.")
+                .message("The winning fund was distributed among the winners who had not been credited earlier.")
                 .result(true)
                 .build();
     }

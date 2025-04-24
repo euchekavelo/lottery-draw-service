@@ -13,8 +13,8 @@ import java.util.Optional;
 public interface WinningRepository extends JpaRepository<Winning, Long> {
 
     @Query(value = "select \n" +
-            "\tCOUNT(*) as number_winnings,\n" +
-            "\tSUM(w.amount) as total_amount\n" +
+            "\tCOALESCE(COUNT(*), 0) as number_winnings,\n" +
+            "\tCOALESCE(SUM(w.amount), 0) as total_amount\n" +
             "from \n" +
             "\twinnings w\n" +
             "\tinner join tickets t on w.ticket_id = t.id \n" +

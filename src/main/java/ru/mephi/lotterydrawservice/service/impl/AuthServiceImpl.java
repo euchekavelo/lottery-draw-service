@@ -17,6 +17,7 @@ import ru.mephi.lotterydrawservice.repository.UserRepository;
 import ru.mephi.lotterydrawservice.security.JwtUtil;
 import ru.mephi.lotterydrawservice.service.AuthService;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Service
@@ -48,8 +49,9 @@ public class AuthServiceImpl implements AuthService {
 
         User newUser = userMapper.userRequestDtoToUser(userRequestDto);
         Balance balance = new Balance();
+        balance.setAmount(new BigDecimal("0"));
         newUser.setBalance(balance);
-        //ne
+        balance.setUser(newUser);
 
         return userMapper.userToUserResponseDto(userRepository.save(newUser));
     }

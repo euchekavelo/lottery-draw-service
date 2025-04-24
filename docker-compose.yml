@@ -14,5 +14,18 @@ services:
       - database_data:/var/lib/postgresql/data/
 
 
+  lottery-draw-service:
+    build:
+      context: .
+    depends_on:
+      - psql
+    environment:
+      - DATABASE_URL=jdbc:postgresql://psql:5432/lottery_draw_db
+      - DATABASE_USER=postgre_user
+      - DATABASE_PASSWORD=postgre_password
+    ports:
+      - "8080:8080"
+
+
 volumes:
   database_data:

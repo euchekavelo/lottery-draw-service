@@ -11,6 +11,7 @@ import java.util.List;
 @Repository
 public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
-    @Query(value = "SELECT * FROM invoices WHERE (ticket_data->>'drawId')::bigint = :drawId", nativeQuery = true)
+    @Query(value = "SELECT * FROM invoices WHERE ticket_data IS NOT NULL AND" +
+            " (ticket_data::json->>'drawId')::bigint = :drawId", nativeQuery = true)
     List<Invoice> findAllByDrawId(@Param("drawId") long drawId);
 }

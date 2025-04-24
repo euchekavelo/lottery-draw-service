@@ -1,4 +1,4 @@
-package ru.mephi.lotterydrawservice.security;
+package ru.mephi.lotterydrawservice.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -17,14 +18,12 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import java.util.List;
+import ru.mephi.lotterydrawservice.security.JwtTokenFilter;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
-
-    private static final List<String> ALLOWED_URL_PATTERNS = List.of("/error", "/auth/register", "/auth/login");
 
     private final UserDetailsService userDetailsService;
     private final JwtTokenFilter jwtTokenFilter;
@@ -65,10 +64,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.authorizeHttpRequests(auth -> auth
-                        .requestMatchers(ALLOWED_URL_PATTERNS.toArray(String[]::new)).permitAll()
-                        .anyRequest().authenticated()
-                )
+        return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(configure -> configure
                         .authenticationEntryPoint(authenticationEntryPoint)

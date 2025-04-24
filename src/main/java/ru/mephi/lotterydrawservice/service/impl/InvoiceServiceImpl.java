@@ -7,7 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.mephi.lotterydrawservice.dto.request.InvoiceRequestDto;
-import ru.mephi.lotterydrawservice.dto.TicketDataDto;
+import ru.mephi.lotterydrawservice.dto.request.TicketDataRequestDto;
 import ru.mephi.lotterydrawservice.dto.response.InvoiceResponseDto;
 import ru.mephi.lotterydrawservice.exception.DrawNotFoundException;
 import ru.mephi.lotterydrawservice.exception.InvalidTicketDataException;
@@ -50,7 +50,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = authUser.getUser();
 
-        TicketDataDto ticketData = invoiceRequestDto.getTicketData();
+        TicketDataRequestDto ticketData = invoiceRequestDto.getTicketData();
         String ticketDataString;
 
         try {
