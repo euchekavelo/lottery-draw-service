@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class InvoiceRequestDto {
 
-    private String ticketData;
+    private TicketDataRequestDto ticketData;
 }

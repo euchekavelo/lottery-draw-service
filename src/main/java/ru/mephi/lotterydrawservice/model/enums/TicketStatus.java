@@ -4,5 +4,6 @@ public enum TicketStatus {
 
     PENDING,
     WIN,
-    LOSE
+    LOSE,
+    INVALID
 }

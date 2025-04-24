@@ -7,7 +7,12 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "draw_results")
+@Table(
+    name = "draw_results",
+    indexes = {
+        @Index(name = "idx_draw_result_draw_id", columnList = "draw_id")
+    }
+)
 @Data
 public class DrawResult {
 

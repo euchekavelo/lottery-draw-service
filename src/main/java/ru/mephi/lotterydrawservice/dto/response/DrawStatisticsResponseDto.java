@@ -5,8 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ErrorResponseDto {
+public class DrawStatisticsResponseDto {
 
-    private String message;
-    private boolean result;
+    private int drawCount;
 }

@@ -2,6 +2,7 @@ package ru.mephi.lotterydrawservice.service.impl;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.mephi.lotterydrawservice.dto.request.UserRequestDto;
 import ru.mephi.lotterydrawservice.dto.request.UserShortRequestDto;
 import ru.mephi.lotterydrawservice.dto.response.TokenResponseDto;
@@ -9,12 +10,14 @@ import ru.mephi.lotterydrawservice.dto.response.UserResponseDto;
 import ru.mephi.lotterydrawservice.exception.RegistrationException;
 import ru.mephi.lotterydrawservice.exception.UserNotFoundException;
 import ru.mephi.lotterydrawservice.mapper.UserMapper;
+import ru.mephi.lotterydrawservice.model.Balance;
 import ru.mephi.lotterydrawservice.model.User;
 import ru.mephi.lotterydrawservice.model.enums.Role;
 import ru.mephi.lotterydrawservice.repository.UserRepository;
 import ru.mephi.lotterydrawservice.security.JwtUtil;
 import ru.mephi.lotterydrawservice.service.AuthService;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Service
@@ -34,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     @Override
     public UserResponseDto register(UserRequestDto userRequestDto) {
         String role = userRequestDto.getRole();
@@ -44,6 +48,10 @@ public class AuthServiceImpl implements AuthService {
         }
 
         User newUser = userMapper.userRequestDtoToUser(userRequestDto);
+        Balance balance = new Balance();
+        balance.setAmount(new BigDecimal("0"));
+        newUser.setBalance(balance);
+        balance.setUser(newUser);
 
         return userMapper.userToUserResponseDto(userRepository.save(newUser));
     }

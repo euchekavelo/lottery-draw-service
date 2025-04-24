@@ -71,18 +71,21 @@ public class DrawServiceImpl implements DrawService {
     @Transactional
     @Override
     public void cancelDraw(Long id) {
-        drawRepository.findById(id)
+        List<DrawStatus> drawStatuses = List.of(DrawStatus.PLANNED, DrawStatus.ACTIVE);
+
+        drawRepository.findByIdAndStatusIn(id, drawStatuses)
                 .ifPresentOrElse(draw -> {
                     try {
                         draw.setStatus(DrawStatus.CANCELLED);
                         invoiceService.cancelByDraw(draw.getId());
                         draw.getTicketList()
-                                .forEach(ticket -> ticket.setStatus(TicketStatus.LOSE));
+                                .forEach(ticket -> ticket.setStatus(TicketStatus.INVALID));
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }, () -> {
-                    throw new NoSuchElementException("Draw was not found");
+                    throw new NoSuchElementException("Draw was not found with statuses "
+                            + DrawStatus.PLANNED + " or " + DrawStatus.ACTIVE + ".");
                 });
     }
 

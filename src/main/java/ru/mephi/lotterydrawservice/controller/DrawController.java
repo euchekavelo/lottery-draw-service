@@ -2,6 +2,7 @@ package ru.mephi.lotterydrawservice.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.mephi.lotterydrawservice.dto.response.DrawResponseDto;
 import ru.mephi.lotterydrawservice.dto.request.DrawCreateRequestDto;
@@ -23,21 +24,25 @@ public class DrawController {
         this.drawService = drawService;
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/{id}/results")
     public ResponseEntity<WinningCombinationResponseDto> getWinningCombinationOfTheDraw(@PathVariable long id) {
         return ResponseEntity.ok(drawService.getWinningCombinationOfTheDraw(id));
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/admin")
     public ResponseEntity<DrawCreateResponseDto> createDraw(@RequestBody DrawCreateRequestDto createRequestDto) {
         return ResponseEntity.ok(drawService.createDraw(createRequestDto));
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/active")
     public ResponseEntity<List<DrawResponseDto>> getActiveDraw() {
         return ResponseEntity.ok(drawService.getDrawsByStatus(DrawStatus.ACTIVE));
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}/cancel/admin")
     public ResponseEntity<Void> cancelDraw(@PathVariable Long id) {
         drawService.cancelDraw(id);
@@ -45,6 +50,7 @@ public class DrawController {
                 .build();
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/completed")
     public ResponseEntity<List<DrawResponseDto>> getCompletedDraw() {
         return ResponseEntity.ok(drawService.getDrawsByStatus(DrawStatus.COMPLETED));
