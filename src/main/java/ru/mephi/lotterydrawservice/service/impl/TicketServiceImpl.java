@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.mephi.lotterydrawservice.dto.response.TicketResponseDto;
 import ru.mephi.lotterydrawservice.exception.DrawResultNotFoundException;
 import ru.mephi.lotterydrawservice.exception.TicketNotFoundException;
@@ -55,8 +56,9 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public List<TicketResponseDto> checkTicketResults() {
         User currentuser = getAuthUser();
+        List<Ticket> ticketList = ticketRepository.findAllByUser(currentuser);
 
-        return ticketMapper.ticketsToTicketResponseDtoList(currentuser.getTicketList());
+        return ticketMapper.ticketsToTicketResponseDtoList(ticketList);
     }
 
     @Override

@@ -22,6 +22,7 @@ import ru.mephi.lotterydrawservice.service.ExportService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -108,6 +109,10 @@ public class ExportServiceImpl implements ExportService {
 
     @Override
     public UserStatisticsResponseDto getUserStatisticsForAPeriod(PeriodRequestDto periodRequestDto) {
+        if (!isValidDatePeriod(periodRequestDto)) {
+            throw new IllegalArgumentException("Dates must be specified, and fromDate must be less than toDate.");
+        }
+
         List<UserStatisticProjection> userStatisticProjections =
                 userRepository.getUserStatisticsByPeriodBetween(periodRequestDto.getFromDate(), periodRequestDto.getToDate());
 
@@ -129,6 +134,10 @@ public class ExportServiceImpl implements ExportService {
 
     @Override
     public WinningStatisticsResponseDto getWinningStatisticsForAPeriod(PeriodRequestDto periodRequestDto) {
+        if (!isValidDatePeriod(periodRequestDto)) {
+            throw new IllegalArgumentException("Dates must be specified, and fromDate must be less than toDate.");
+        }
+
         WinningStatisticProjection winningStatisticProjection =
                 winningRepository.getWinningStatisticsByPeriodBetween(periodRequestDto.getFromDate(),
                                 periodRequestDto.getToDate()).orElse(null);
@@ -144,6 +153,10 @@ public class ExportServiceImpl implements ExportService {
 
     @Override
     public DrawStatisticsResponseDto getDrawStatisticsForAPeriod(PeriodRequestDto periodRequestDto) {
+        if (!isValidDatePeriod(periodRequestDto)) {
+            throw new IllegalArgumentException("Dates must be specified, and fromDate must be less than toDate.");
+        }
+
         int countDraw = drawRepository.getCountAllByPeriodBetween(periodRequestDto.getFromDate(),
                 periodRequestDto.getToDate());
 
@@ -175,5 +188,12 @@ public class ExportServiceImpl implements ExportService {
             emailService.sendEmail(ticket.getUser().getLogin(), "Winning a lottery draw",
                     stringBuilder.toString());
         });
+    }
+
+    private boolean isValidDatePeriod(PeriodRequestDto periodRequestDto) {
+        LocalDateTime fromDate = periodRequestDto.getFromDate();
+        LocalDateTime toDate = periodRequestDto.getToDate();
+
+        return (fromDate != null && toDate != null) && fromDate.isBefore(toDate);
     }
 }

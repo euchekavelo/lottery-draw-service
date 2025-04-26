@@ -16,4 +16,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     Optional<Ticket> findByIdAndUser(Long id, User user);
 
     List<Ticket> findAllByDrawAndStatus(Draw draw, TicketStatus ticketStatus);
+
+    List<Ticket> findAllByUser(User user);
 }

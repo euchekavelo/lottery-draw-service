@@ -25,8 +25,8 @@ services:
       - DATABASE_PASSWORD=postgre_password
       - SMTP_HOST=smtp.ethereal.email
       - SMTP_PORT=587
-      - SMTP_USERNAME=lizeth.boehm@ethereal.email
-      - SMTP_PASSWORD=VwCannYz3BSBPptXrd
+      - SMTP_USERNAME=glenda4@ethereal.email
+      - SMTP_PASSWORD=4ktrmGG3pAmT59AHsG
     ports:
       - "8080:8080"
 
