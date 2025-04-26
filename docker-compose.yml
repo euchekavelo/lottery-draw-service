@@ -23,6 +23,10 @@ services:
       - DATABASE_URL=jdbc:postgresql://psql:5432/lottery_draw_db
       - DATABASE_USER=postgre_user
       - DATABASE_PASSWORD=postgre_password
+      - SMTP_HOST=smtp.ethereal.email
+      - SMTP_PORT=587
+      - SMTP_USERNAME=lizeth.boehm@ethereal.email
+      - SMTP_PASSWORD=VwCannYz3BSBPptXrd
     ports:
       - "8080:8080"
 

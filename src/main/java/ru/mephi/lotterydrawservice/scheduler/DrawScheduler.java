@@ -17,7 +17,7 @@ public class DrawScheduler {
     private final DrawRepository drawRepository;
     private final DrawResultService resultService;
 
-    @Scheduled(cron = "0 */5 * * * *")
+    @Scheduled(cron = "0 */1 * * * *")
     public void updateDrawWhenStatusPlanned() {
         drawRepository.findAllByStatus(DrawStatus.PLANNED)
                 .stream()

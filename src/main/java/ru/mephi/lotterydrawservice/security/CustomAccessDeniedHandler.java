@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -36,10 +37,15 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.setStatus(HttpStatus.FORBIDDEN.value());
 
         long currentUserId = getAuthUser().getId();
-        String ipAddress = request.getRemoteAddr();
         String requestedUrl = request.getRequestURI();
 
-        log.warn("Access denied for user with ID: {}, IP: {}, URL: {}", currentUserId, ipAddress, requestedUrl);
+        try {
+            MDC.put("user_id", Long.toString(currentUserId));
+            MDC.put("requested_url", requestedUrl);
+            log.warn("Access denied");
+        } finally {
+            MDC.clear();
+        }
 
         ResponseDto responseDto = ResponseDto.builder()
                 .message(accessDeniedException.getMessage())

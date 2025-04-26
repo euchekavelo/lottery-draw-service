@@ -9,6 +9,18 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  mail:
+    host: ${SMTP_HOST:smtp.ethereal.email}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USERNAME:lizeth.boehm@ethereal.email}
+    password: ${SMTP_PASSWORD:VwCannYz3BSBPptXrd}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+        debug: false
 
 
 app:
