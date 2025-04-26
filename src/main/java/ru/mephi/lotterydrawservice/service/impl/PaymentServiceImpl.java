@@ -1,5 +1,7 @@
 package ru.mephi.lotterydrawservice.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ import ru.mephi.lotterydrawservice.service.TicketService;
 
 import java.security.SecureRandom;
 
+@Slf4j
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
@@ -71,8 +74,20 @@ public class PaymentServiceImpl implements PaymentService {
 
         payment.setInvoice(invoice);
         payment.setAmount(paymentRequestDto.getAmount());
+        Payment savedPayment = paymentRepository.save(payment);
 
-        return paymentMapper.paymentToPaymentResponseDto(paymentRepository.save(payment));
+        try {
+            MDC.put("user_id", Long.toString(authUser.getUser().getId()));
+            if (savedPayment.getStatus() != PaymentStatus.SUCCESS) {
+                log.error("Payment not successfully processed.");
+            } else {
+                log.info("Payment successfully processed.");
+            }
+        } finally {
+            MDC.clear();
+        }
+
+        return paymentMapper.paymentToPaymentResponseDto(savedPayment);
     }
 
     private boolean isCardDataValid(String cardNumber, String cvc) {

@@ -17,6 +17,7 @@ import ru.mephi.lotterydrawservice.repository.DrawRepository;
 import ru.mephi.lotterydrawservice.repository.TicketRepository;
 import ru.mephi.lotterydrawservice.repository.UserRepository;
 import ru.mephi.lotterydrawservice.repository.WinningRepository;
+import ru.mephi.lotterydrawservice.service.EmailService;
 import ru.mephi.lotterydrawservice.service.ExportService;
 
 import java.math.BigDecimal;
@@ -30,15 +31,17 @@ public class ExportServiceImpl implements ExportService {
     private final TicketRepository ticketRepository;
     private final UserRepository userRepository;
     private final WinningRepository winningRepository;
+    private final EmailService emailService;
 
     @Autowired
     public ExportServiceImpl(DrawRepository drawRepository, TicketRepository ticketRepository,
-                             UserRepository userRepository, WinningRepository winningRepository) {
+                             UserRepository userRepository, WinningRepository winningRepository, EmailService emailService) {
 
         this.drawRepository = drawRepository;
         this.ticketRepository = ticketRepository;
         this.userRepository = userRepository;
         this.winningRepository = winningRepository;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -60,14 +63,17 @@ public class ExportServiceImpl implements ExportService {
         BigDecimal winningAmount = winningRequestDto.getWinningAmount()
                 .divide(BigDecimal.valueOf(ticketList.size()), 2, RoundingMode.HALF_UP);
 
-        ticketList.stream()
+        List<Ticket> winningTickets = ticketList.stream()
                 .filter(ticket -> ticket.getWinning() == null)
-                .forEach(ticket -> {
-                    addWinningToTicket(winningAmount, ticket);
-                    increaseUserBalance(winningAmount, ticket.getUser());
-                });
+                .toList();
 
-        ticketRepository.saveAll(ticketList);
+        winningTickets.forEach(ticket -> {
+            addWinningToTicket(winningAmount, ticket);
+            increaseUserBalance(winningAmount, ticket.getUser());
+        });
+
+        List<Ticket> savedTickets = ticketRepository.saveAll(winningTickets);
+        sendEmailsToTheWinners(savedTickets);
 
         return ResponseDto.builder()
                 .message("The winning fund was distributed among the winners who had not been credited earlier.")
@@ -156,5 +162,18 @@ public class ExportServiceImpl implements ExportService {
     private void increaseUserBalance(BigDecimal winningAmount, User user) {
         Balance balance = user.getBalance();
         balance.setAmount(balance.getAmount().add(winningAmount));
+    }
+
+    private void sendEmailsToTheWinners(List<Ticket> ticketList) {
+        ticketList.forEach(ticket -> {
+            StringBuilder stringBuilder = new StringBuilder("Congratulations! You have won ");
+            stringBuilder.append(ticket.getWinning().getAmount());
+            stringBuilder.append(" in the draw with ID ");
+            stringBuilder.append(ticket.getDraw().getId());
+            stringBuilder.append(".");
+
+            emailService.sendEmail(ticket.getUser().getLogin(), "Winning a lottery draw",
+                    stringBuilder.toString());
+        });
     }
 }

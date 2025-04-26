@@ -1,6 +1,9 @@
 package ru.mephi.lotterydrawservice.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.mephi.lotterydrawservice.dto.response.DrawResponseDto;
@@ -11,11 +14,13 @@ import ru.mephi.lotterydrawservice.exception.DrawResultNotFoundException;
 import ru.mephi.lotterydrawservice.mapper.DrawMapper;
 import ru.mephi.lotterydrawservice.model.Draw;
 import ru.mephi.lotterydrawservice.model.DrawResult;
+import ru.mephi.lotterydrawservice.model.User;
 import ru.mephi.lotterydrawservice.model.enums.DrawStatus;
 import ru.mephi.lotterydrawservice.model.enums.LotteryType;
 import ru.mephi.lotterydrawservice.model.enums.TicketStatus;
 import ru.mephi.lotterydrawservice.repository.DrawRepository;
 import ru.mephi.lotterydrawservice.repository.DrawResultRepository;
+import ru.mephi.lotterydrawservice.security.AuthUser;
 import ru.mephi.lotterydrawservice.service.DrawService;
 import ru.mephi.lotterydrawservice.service.InvoiceService;
 
@@ -25,6 +30,7 @@ import java.util.NoSuchElementException;
 
 import static java.util.Objects.isNull;
 
+@Slf4j
 @Service
 public class DrawServiceImpl implements DrawService {
 
@@ -53,11 +59,18 @@ public class DrawServiceImpl implements DrawService {
                 .build();
     }
 
-
     @Override
     public DrawCreateResponseDto createDraw(DrawCreateRequestDto createRequestDto) {
         validateDrawCreateRequestDto(createRequestDto);
         Draw draw = drawRepository.save(drawMapper.toDraw(createRequestDto, DrawStatus.PLANNED));
+
+        try {
+            MDC.put("user_id", Long.toString(getAuthUser().getId()));
+            log.info("Draw created with ID {}.", draw.getId());
+        } finally {
+            MDC.clear();
+        }
+
         return drawMapper.toDrawCreateResponseDto(draw);
     }
 
@@ -103,5 +116,11 @@ public class DrawServiceImpl implements DrawService {
                 createRequestDto.getFinishTime().isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("Invalid finishTime");
         }
+    }
+
+    private User getAuthUser() {
+        AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return authUser.getUser();
     }
 }
