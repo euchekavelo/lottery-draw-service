@@ -51,7 +51,7 @@ public class DrawServiceImpl implements DrawService {
 
     @Override
     public WinningCombinationResponseDto getWinningCombinationOfTheDraw(long drawId) {
-        DrawResult drawResult = drawResultRepository.findById(drawId)
+        DrawResult drawResult = drawResultRepository.findByDrawId(drawId)
                 .orElseThrow(() -> new DrawResultNotFoundException("The draw result for the specified draw was not found."));
 
         return WinningCombinationResponseDto.builder()
