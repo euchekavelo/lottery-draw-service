@@ -3,7 +3,6 @@ package ru.mephi.lotterydrawservice.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.mephi.lotterydrawservice.dto.response.DrawResponseDto;
@@ -14,13 +13,12 @@ import ru.mephi.lotterydrawservice.exception.DrawResultNotFoundException;
 import ru.mephi.lotterydrawservice.mapper.DrawMapper;
 import ru.mephi.lotterydrawservice.model.Draw;
 import ru.mephi.lotterydrawservice.model.DrawResult;
-import ru.mephi.lotterydrawservice.model.User;
 import ru.mephi.lotterydrawservice.model.enums.DrawStatus;
 import ru.mephi.lotterydrawservice.model.enums.LotteryType;
 import ru.mephi.lotterydrawservice.model.enums.TicketStatus;
 import ru.mephi.lotterydrawservice.repository.DrawRepository;
 import ru.mephi.lotterydrawservice.repository.DrawResultRepository;
-import ru.mephi.lotterydrawservice.security.AuthUser;
+import ru.mephi.lotterydrawservice.service.AuthService;
 import ru.mephi.lotterydrawservice.service.DrawService;
 import ru.mephi.lotterydrawservice.service.InvoiceService;
 
@@ -38,15 +36,18 @@ public class DrawServiceImpl implements DrawService {
     private final DrawMapper drawMapper;
     private final DrawRepository drawRepository;
     private final InvoiceService invoiceService;
+    private final AuthService authService;
 
     @Autowired
     public DrawServiceImpl(DrawResultRepository drawResultRepository,
-                           DrawMapper drawMapper, DrawRepository drawRepository, InvoiceService invoiceService) {
+                           DrawMapper drawMapper, DrawRepository drawRepository, InvoiceService invoiceService,
+                           AuthService authService) {
 
         this.drawResultRepository = drawResultRepository;
         this.drawRepository = drawRepository;
         this.drawMapper = drawMapper;
         this.invoiceService = invoiceService;
+        this.authService = authService;
     }
 
     @Override
@@ -65,7 +66,7 @@ public class DrawServiceImpl implements DrawService {
         Draw draw = drawRepository.save(drawMapper.toDraw(createRequestDto, DrawStatus.PLANNED));
 
         try {
-            MDC.put("user_id", Long.toString(getAuthUser().getId()));
+            MDC.put("user_id", Long.toString(authService.getAuthUser().getId()));
             log.info("Draw created with ID {}.", draw.getId());
         } finally {
             MDC.clear();
@@ -116,11 +117,5 @@ public class DrawServiceImpl implements DrawService {
                 createRequestDto.getFinishTime().isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("Invalid finishTime");
         }
-    }
-
-    private User getAuthUser() {
-        AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        return authUser.getUser();
     }
 }

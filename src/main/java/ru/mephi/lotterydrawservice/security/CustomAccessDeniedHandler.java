@@ -10,11 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 import ru.mephi.lotterydrawservice.dto.response.ResponseDto;
-import ru.mephi.lotterydrawservice.model.User;
+import ru.mephi.lotterydrawservice.service.AuthService;
 
 import java.io.IOException;
 
@@ -23,10 +22,12 @@ import java.io.IOException;
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     private final ObjectMapper objectMapper;
+    private final AuthService authService;
 
     @Autowired
-    public CustomAccessDeniedHandler(ObjectMapper objectMapper) {
+    public CustomAccessDeniedHandler(ObjectMapper objectMapper, AuthService authService) {
         this.objectMapper = objectMapper;
+        this.authService = authService;
     }
 
     @Override
@@ -36,7 +37,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.FORBIDDEN.value());
 
-        long currentUserId = getAuthUser().getId();
+        long currentUserId = authService.getAuthUser().getId();
         String requestedUrl = request.getRequestURI();
 
         try {
@@ -53,11 +54,5 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                 .build();
 
         objectMapper.writeValue(response.getOutputStream(), responseDto);
-    }
-
-    private User getAuthUser() {
-        AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        return authUser.getUser();
     }
 }

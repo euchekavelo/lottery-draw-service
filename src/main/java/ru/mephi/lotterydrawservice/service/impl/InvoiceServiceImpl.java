@@ -3,7 +3,6 @@ package ru.mephi.lotterydrawservice.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.mephi.lotterydrawservice.dto.request.InvoiceRequestDto;
@@ -20,7 +19,7 @@ import ru.mephi.lotterydrawservice.model.enums.DrawStatus;
 import ru.mephi.lotterydrawservice.model.enums.InvoiceStatus;
 import ru.mephi.lotterydrawservice.repository.DrawRepository;
 import ru.mephi.lotterydrawservice.repository.InvoiceRepository;
-import ru.mephi.lotterydrawservice.security.AuthUser;
+import ru.mephi.lotterydrawservice.service.AuthService;
 import ru.mephi.lotterydrawservice.service.InvoiceService;
 
 import java.util.List;
@@ -34,21 +33,22 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final DrawRepository drawRepository;
     private final InvoiceMapper invoiceMapper;
     private final ObjectMapper objectMapper;
+    private final AuthService authService;
 
     @Autowired
     public InvoiceServiceImpl(InvoiceRepository invoiceRepository, DrawRepository drawRepository,
-                              InvoiceMapper invoiceMapper, ObjectMapper objectMapper) {
+                              InvoiceMapper invoiceMapper, ObjectMapper objectMapper, AuthService authService) {
 
         this.invoiceRepository = invoiceRepository;
         this.drawRepository = drawRepository;
         this.invoiceMapper = invoiceMapper;
         this.objectMapper = objectMapper;
+        this.authService = authService;
     }
 
     @Override
     public InvoiceResponseDto register(InvoiceRequestDto invoiceRequestDto) {
-        AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = authUser.getUser();
+        User user = authService.getAuthUser();
 
         TicketDataRequestDto ticketData = invoiceRequestDto.getTicketData();
         String ticketDataString;

@@ -4,9 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.mephi.lotterydrawservice.dto.response.TicketResponseDto;
 import ru.mephi.lotterydrawservice.exception.DrawResultNotFoundException;
 import ru.mephi.lotterydrawservice.exception.TicketNotFoundException;
@@ -18,7 +16,7 @@ import ru.mephi.lotterydrawservice.model.enums.DrawStatus;
 import ru.mephi.lotterydrawservice.model.enums.TicketStatus;
 import ru.mephi.lotterydrawservice.repository.DrawRepository;
 import ru.mephi.lotterydrawservice.repository.TicketRepository;
-import ru.mephi.lotterydrawservice.security.AuthUser;
+import ru.mephi.lotterydrawservice.service.AuthService;
 import ru.mephi.lotterydrawservice.service.TicketService;
 import ru.mephi.lotterydrawservice.model.enums.LotteryType;
 
@@ -32,20 +30,22 @@ public class TicketServiceImpl implements TicketService {
     private final TicketMapper ticketMapper;
     private final DrawRepository drawRepository;
     private final ObjectMapper objectMapper;
+    private final AuthService authService;
 
     @Autowired
     public TicketServiceImpl(TicketRepository ticketRepository, TicketMapper ticketMapper, DrawRepository drawRepository,
-                             ObjectMapper objectMapper) {
+                             ObjectMapper objectMapper, AuthService authService) {
 
         this.ticketRepository = ticketRepository;
         this.ticketMapper = ticketMapper;
         this.drawRepository = drawRepository;
         this.objectMapper = objectMapper;
+        this.authService = authService;
     }
 
     @Override
     public TicketResponseDto checkTicketResult(long ticketId) {
-        User currentuser = getAuthUser();
+        User currentuser = authService.getAuthUser();
         Ticket ticket = ticketRepository.findByIdAndUser(ticketId, currentuser)
                 .orElseThrow(() -> new TicketNotFoundException("No ticket with the specified ID was found " +
                         "for the current user."));
@@ -55,7 +55,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public List<TicketResponseDto> checkTicketResults() {
-        User currentuser = getAuthUser();
+        User currentuser = authService.getAuthUser();
         List<Ticket> ticketList = ticketRepository.findAllByUser(currentuser);
 
         return ticketMapper.ticketsToTicketResponseDtoList(ticketList);
@@ -63,7 +63,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public TicketResponseDto getTicketById(long id) {
-        User currentuser = getAuthUser();
+        User currentuser = authService.getAuthUser();
         Ticket ticket = ticketRepository.findByIdAndUser(id, currentuser)
                 .orElseThrow(() -> new TicketNotFoundException("No ticket with the specified ID was found " +
                         "for the current user."));
@@ -93,12 +93,6 @@ public class TicketServiceImpl implements TicketService {
         ticket.setData(combinationNumbers);
         ticket.setStatus(TicketStatus.PENDING);
         ticketRepository.save(ticket);
-    }
-
-    private User getAuthUser() {
-        AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        return authUser.getUser();
     }
 
     private JsonNode parseData(String data) throws JsonProcessingException {
