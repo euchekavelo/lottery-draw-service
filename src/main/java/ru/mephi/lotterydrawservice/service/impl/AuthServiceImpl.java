@@ -1,5 +1,6 @@
 package ru.mephi.lotterydrawservice.service.impl;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import ru.mephi.lotterydrawservice.model.Balance;
 import ru.mephi.lotterydrawservice.model.User;
 import ru.mephi.lotterydrawservice.model.enums.Role;
 import ru.mephi.lotterydrawservice.repository.UserRepository;
+import ru.mephi.lotterydrawservice.security.AuthUser;
 import ru.mephi.lotterydrawservice.security.JwtUtil;
 import ru.mephi.lotterydrawservice.service.AuthService;
 
@@ -69,5 +71,12 @@ public class AuthServiceImpl implements AuthService {
         return TokenResponseDto.builder()
                 .token(jwtUtil.generateTokenForUser(userShortRequestDto.getLogin()))
                 .build();
+    }
+
+    @Override
+    public User getAuthUser() {
+        AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return authUser.getUser();
     }
 }

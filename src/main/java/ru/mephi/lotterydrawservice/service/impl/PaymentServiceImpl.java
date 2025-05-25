@@ -3,7 +3,6 @@ package ru.mephi.lotterydrawservice.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.mephi.lotterydrawservice.dto.request.PaymentRequestDto;
@@ -17,7 +16,7 @@ import ru.mephi.lotterydrawservice.model.User;
 import ru.mephi.lotterydrawservice.model.enums.InvoiceStatus;
 import ru.mephi.lotterydrawservice.model.enums.PaymentStatus;
 import ru.mephi.lotterydrawservice.repository.PaymentRepository;
-import ru.mephi.lotterydrawservice.security.AuthUser;
+import ru.mephi.lotterydrawservice.service.AuthService;
 import ru.mephi.lotterydrawservice.service.InvoiceService;
 import ru.mephi.lotterydrawservice.service.PaymentService;
 import ru.mephi.lotterydrawservice.service.TicketService;
@@ -32,22 +31,23 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentMapper paymentMapper;
     private final InvoiceService invoiceService;
     private final TicketService ticketService;
+    private final AuthService authService;
 
     @Autowired
     public PaymentServiceImpl(PaymentRepository paymentRepository, PaymentMapper paymentMapper,
-                              InvoiceService invoiceService, TicketService ticketService) {
+                              InvoiceService invoiceService, TicketService ticketService, AuthService authService) {
 
         this.paymentRepository = paymentRepository;
         this.paymentMapper = paymentMapper;
         this.invoiceService = invoiceService;
         this.ticketService = ticketService;
+        this.authService = authService;
     }
 
     @Transactional
     @Override
     public PaymentResponseDto pay(PaymentRequestDto paymentRequestDto) {
-        AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = authUser.getUser();
+        User user = authService.getAuthUser();
 
         Invoice invoice = invoiceService.findInvoiceById(paymentRequestDto.getInvoiceId());
         if (invoice.getStatus() != InvoiceStatus.PENDING) {
@@ -77,7 +77,7 @@ public class PaymentServiceImpl implements PaymentService {
         Payment savedPayment = paymentRepository.save(payment);
 
         try {
-            MDC.put("user_id", Long.toString(authUser.getUser().getId()));
+            MDC.put("user_id", Long.toString(user.getId()));
             if (savedPayment.getStatus() != PaymentStatus.SUCCESS) {
                 log.error("Payment not successfully processed.");
             } else {
